@@ -708,10 +708,21 @@
   var esIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
   var vistoIOS = false;
   try { vistoIOS = localStorage.getItem('notasUnsa.ios') === '1'; } catch (e) { /* nada */ }
-  if (esIOS && !enApp && !vistoIOS) $('ios').hidden = false;
+  function mostrarIOS() { if (esIOS && !enApp && !vistoIOS) $('ios').hidden = false; }
   $('iosCerrar').onclick = function () {
     $('ios').hidden = true;
+    vistoIOS = true;
     try { localStorage.setItem('notasUnsa.ios', '1'); } catch (e) { /* nada */ }
+  };
+
+  // Aviso de privacidad en la primera visita. No bloquea nada; se cierra con «Entendido».
+  var vistoAviso = false;
+  try { vistoAviso = localStorage.getItem('notasUnsa.aviso') === '1'; } catch (e) { /* nada */ }
+  if (!vistoAviso) $('avisoPriv').hidden = false; else mostrarIOS();
+  $('avisoOk').onclick = function () {
+    $('avisoPriv').hidden = true;
+    try { localStorage.setItem('notasUnsa.aviso', '1'); } catch (e) { /* nada */ }
+    mostrarIOS();
   };
 
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {

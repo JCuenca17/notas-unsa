@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Cookies y almacenamiento | Mis Notas UNSA</title>
+  <meta name="description" content="Mis Notas UNSA no usa cookies. Qué guarda en tu navegador, para qué y cómo borrarlo.">
+  <link rel="canonical" href="https://notas-unsa.vercel.app/cookies.html">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preload" href="fonts/schibsted-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <script>try { var t = localStorage.getItem('notasUnsa.tema'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-in">
+      <a class="logo" href="./"><img src="favicon.svg" alt="" width="26" height="26"> Mis Notas <span>UNSA</span></a>
+      <a class="btn btn-sec btn-chico" href="./">Volver a mis notas</a>
+    </div>
+  </header>
+
+  <main class="wrap legal-doc">
+    <h1>Cookies y almacenamiento</h1>
+    <p class="actualizado">Última actualización: 19 de noviembre de 2026</p>
+
+    <div class="resumen-legal">
+      <h2>En corto</h2>
+      <p><b>Mis Notas no usa cookies</b>, ni propias ni de terceros, ni para publicidad ni para seguimiento. Solo guarda en tu navegador lo necesario para que la app funcione, y nada sale de tu dispositivo.</p>
+    </div>
+
+    <h2>Qué se guarda en tu navegador</h2>
+    <div class="tabla-legal">
+      <table>
+        <thead><tr><th>Dato</th><th>Dónde</th><th>Para qué</th><th>Cuánto dura</th></tr></thead>
+        <tbody>
+          <tr><td><code>notasUnsa.sesion</code></td><td>Almacenamiento de la pestaña (sessionStorage)</td><td>Tus notas, CUI y porcentajes mientras usas la app</td><td>Hasta cerrar la pestaña o tocar «Salir y borrar»</td></tr>
+          <tr><td><code>notasUnsa.perfiles</code></td><td>Almacenamiento local (localStorage)</td><td>Tus datos, separados por CUI, solo si marcas «Recordarme en esta computadora»</td><td>Hasta que desmarques la opción o los borres</td></tr>
+          <tr><td><code>notasUnsa.ultimo</code></td><td>Almacenamiento local</td><td>Qué CUI recordado abrir al volver</td><td>Igual que el anterior</td></tr>
+          <tr><td><code>notasUnsa.tema</code></td><td>Almacenamiento local</td><td>Si elegiste tema claro u oscuro</td><td>Hasta que lo borres</td></tr>
+          <tr><td><code>notasUnsa.aviso</code></td><td>Almacenamiento local</td><td>Que ya viste el aviso de privacidad</td><td>Hasta que lo borres</td></tr>
+          <tr><td><code>notasUnsa.ios</code></td><td>Almacenamiento local</td><td>Que ya viste cómo instalar la app en iPhone</td><td>Hasta que lo borres</td></tr>
+          <tr><td>Copia de la app</td><td>Caché del navegador (service worker)</td><td>Abrir la app sin internet. Solo guarda los archivos de la página, nunca tus datos</td><td>Hasta que se publique una versión nueva o la borres</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Todo esto es necesario para el funcionamiento que tú pides: calcular, recordar si lo eliges y abrir sin conexión. No se usa para conocerte ni para mostrarte anuncios.</p>
+
+    <h2>Estadísticas de visitas</h2>
+    <p>Para contar visitas usamos Vercel Web Analytics, que según Vercel <b>no usa cookies</b> ni guarda nada en tu navegador. Antes de contar cada visita se quita de la dirección la parte con tus notas. Más detalle en la <a href="privacidad.html#estadisticas">política de privacidad</a>.</p>
+
+    <h2>Cómo borrar todo</h2>
+    <ul>
+      <li>En la app: «Salir y borrar» borra tu sesión y lo recordado de tu CUI.</li>
+      <li>En la app: «Borrar lo de todos los alumnos en esta computadora», dentro de «Cómo se calcula», borra a todos los alumnos recordados.</li>
+      <li>En tu navegador: en Chrome o Edge, toca el ícono a la izquierda de la dirección, luego «Configuración del sitio» y «Borrar datos». En el celular, desde la configuración del navegador o de la app instalada.</li>
+    </ul>
+
+    <p class="otros-legales">Ver también: <a href="privacidad.html">Política de privacidad</a> · <a href="terminos.html">Términos de uso y aviso legal</a></p>
+  </main>
+</body>
+</html>

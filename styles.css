@@ -3,6 +3,25 @@
  * Cada tarjeta se lee de arriba abajo: cuánto llevas, qué necesitas, y justo debajo
  * tu sílabo para corregir lo que falta. Escritorio: cursos en fila. Celular: una columna.
  */
+
+/* Schibsted Grotesk (SIL OFL 1.1, ver fonts/OFL.txt), alojada aquí para no enviar la IP del alumno a Google. */
+@font-face {
+  font-family: "Schibsted Grotesk";
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url("fonts/schibsted-grotesk-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Schibsted Grotesk";
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url("fonts/schibsted-grotesk-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
 :root {
   --papel: #f3f4f1;
   --hoja: #ffffff;
@@ -329,3 +348,34 @@ button, a, summary, input, textarea { touch-action: manipulation; -webkit-tap-hi
   .sesion #salir { margin-left: 0; }
   .ses-recordar input { width: 22px; height: 22px; }
 }
+
+/* Páginas legales */
+.legal-doc { max-width: 760px; display: grid; gap: 14px; padding-block: 32px 64px; font-size: 16px; line-height: 1.65; }
+.legal-doc h1 { font-size: 32px; line-height: 1.15; letter-spacing: -0.02em; font-weight: 800; text-wrap: balance; }
+.legal-doc h2 { font-size: 19px; font-weight: 700; margin-top: 14px; }
+.legal-doc p, .legal-doc li { color: var(--tinta); max-width: 70ch; }
+.legal-doc ul { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
+.legal-doc code { font-size: 13px; background: var(--papel); border: 1px solid var(--linea); border-radius: 4px; padding: 1px 5px; white-space: nowrap; }
+.actualizado { color: var(--gris) !important; font-size: 14px; }
+.resumen-legal { background: var(--azul-suave); border-radius: 12px; padding: 18px 20px; display: grid; gap: 8px; }
+.resumen-legal h2 { margin-top: 0; font-size: 17px; }
+.tabla-legal { overflow-x: auto; border: 1px solid var(--linea); border-radius: 10px; background: var(--hoja); }
+.tabla-legal table { font-size: 14px; min-width: 620px; }
+.tabla-legal th, .tabla-legal td { padding: 10px 12px; vertical-align: top; }
+.tabla-legal th:first-child, .tabla-legal td:first-child { padding-left: 12px; }
+.otros-legales { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--linea); color: var(--gris) !important; font-size: 14px; }
+@media (max-width: 720px) { .legal-doc { padding-block: 22px 48px; } .legal-doc h1 { font-size: 26px; } }
+
+/* Pie con enlaces legales */
+.pie-legal { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 16px; }
+.pie-legal a { color: var(--gris); }
+.pie-legal a:hover { color: var(--tinta); }
+
+/* Aviso de privacidad en la primera visita (no bloquea la página) */
+.aviso-priv {
+  position: fixed; z-index: 24; left: max(16px, env(safe-area-inset-left, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  max-width: 420px; background: var(--hoja); border: 1px solid var(--linea); border-radius: 12px; box-shadow: 0 8px 24px rgb(0 0 0 / .15);
+  padding: 14px 16px; display: grid; gap: 10px; font-size: 14px;
+}
+.aviso-priv div { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+@media (max-width: 720px) { .aviso-priv { right: max(16px, env(safe-area-inset-right, 0px)); max-width: none; } }

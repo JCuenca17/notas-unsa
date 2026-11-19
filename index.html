@@ -49,9 +49,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Mis Notas">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap">
+  <link rel="preload" href="fonts/schibsted-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <script>
     try { var t = localStorage.getItem('notasUnsa.tema'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
@@ -146,9 +144,24 @@
       </div>
       <p class="legal">Herramienta independiente, sin relación oficial con la UNSA.</p>
     </details>
+
+    <footer class="pie-legal">
+      <span>Mis Notas UNSA es un proyecto independiente, no oficial. Los resultados son referenciales.</span>
+      <a href="privacidad.html">Privacidad</a>
+      <a href="cookies.html">Cookies</a>
+      <a href="terminos.html">Términos y aviso legal</a>
+    </footer>
   </main>
 
   <p id="toast" class="toast" role="status" hidden></p>
+
+  <div id="avisoPriv" class="aviso-priv" role="region" aria-label="Aviso de privacidad" hidden>
+    <p><b>Esta página no usa cookies.</b> Tus notas se quedan en tu navegador y no se envían a ningún servidor. Solo contamos visitas de forma anónima.</p>
+    <div>
+      <button id="avisoOk" class="btn btn-chico" type="button">Entendido</button>
+      <a href="privacidad.html">Leer la política de privacidad</a>
+    </div>
+  </div>
 
   <div id="ios" class="ios" hidden>
     <p>Para instalar Mis Notas en tu iPhone, toca <b>Compartir</b> y luego <b>Agregar a inicio</b>.</p>

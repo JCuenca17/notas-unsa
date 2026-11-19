@@ -2,7 +2,7 @@
  * Service worker de Mis Notas: guarda la app para que abra sin internet.
  * Al publicar cambios, sube VERSION para que los usuarios reciban la nueva versión.
  */
-var VERSION = 'mis-notas-v4';
+var VERSION = 'mis-notas-v5';
 var APP = [
   './',
   'index.html',
@@ -15,7 +15,12 @@ var APP = [
   'icons/icon-512.png',
   'icons/icon-maskable-512.png',
   'icons/apple-touch-icon.png',
-  'og.png'
+  'og.png',
+  'privacidad.html',
+  'cookies.html',
+  'terminos.html',
+  'fonts/schibsted-grotesk-latin.woff2',
+  'fonts/schibsted-grotesk-latin-ext.woff2'
 ];
 
 self.addEventListener('install', function (ev) {
