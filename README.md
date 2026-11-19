@@ -1,6 +1,6 @@
 # Mis Notas UNSA
 
-**https://jcuenca17.github.io/notas-unsa/**
+**https://notas-unsa.vercel.app/**
 
 Calculadora no oficial de notas parciales para alumnos de la UNSA. Lee la tabla de
 «Consulta de Notas Parciales» de la extranet y muestra, por curso, la nota acumulada,
@@ -35,7 +35,7 @@ python -m http.server 8765
 
 ## Publicar cambios
 
-GitHub Pages publica la rama `main` desde la raíz. Antes de subir cambios, **sube `VERSION`
+Se publica en Vercel (`notas-unsa.vercel.app`). `vercel.json` evita que `sw.js` quede en caché. Antes de publicar cambios, **sube `VERSION`
 en `sw.js`** (por ejemplo `mis-notas-v2`) para que quienes tienen la app instalada reciban
 la versión nueva.
 
