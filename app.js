@@ -5,6 +5,18 @@
   var CLAVE_TEMA = 'notasUnsa.tema';
   var EXTRANET = 'extranet.unsa.edu.pe';
 
+  /*
+   * Acciones contadas con Vercel Web Analytics (plan gratis): cada acción se registra como
+   * una visita a una página interna, p. ej. /accion/notas-cargadas-boton.
+   * Solo nombres fijos; nunca notas, CUI ni nombres. En local no se cuenta nada.
+   */
+  function contar(accion) {
+    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') return;
+    if (typeof window.va !== 'function') return;
+    var ruta = '/accion/' + accion;
+    try { window.va('pageview', { route: ruta, path: ruta }); } catch (e) { /* nada */ }
+  }
+
   // Notas inventadas para que la página no se vea vacía la primera vez.
   var EJEMPLO = [
     'Periodo: 2026-B',
@@ -492,7 +504,9 @@
     var texto;
     try { texto = decodeURIComponent(m[2]); } catch (e) { return false; }
     try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* nada */ }
-    return usarTexto(texto, true);
+    var ok = usarTexto(texto, true);
+    if (ok) contar(fuente === 'boton' ? 'notas-cargadas-boton' : 'notas-cargadas-boton-antiguo');
+    return ok;
   }
 
   // ---------- eventos ----------
@@ -513,7 +527,7 @@
   $('leerPegado').onclick = function () {
     $('errorPegado').textContent = '';
     fuente = 'pegado';
-    if (usarTexto($('pegado').value, true)) { $('pegado').value = ''; cargado(); }
+    if (usarTexto($('pegado').value, true)) { $('pegado').value = ''; contar('notas-cargadas-pegado'); cargado(); }
     else $('errorPegado').textContent = 'Ese texto no tiene la tabla de notas. Copia toda la página de Notas Parciales y vuelve a pegarla.';
   };
 
@@ -528,6 +542,7 @@
       ev.preventDefault();
       $('pegado').value = '';
       $('errorPegado').textContent = '';
+      contar('notas-cargadas-pegado');
       cargado();
     } else if (t && t.id !== 'pegado') {
       avisar('Eso no parece tu página de notas. Copia toda la página de Notas Parciales.');
@@ -655,12 +670,14 @@
   $('sesion').addEventListener('change', function (ev) {
     if (ev.target.id !== 'recordar') return;
     recordar(ev.target.checked);
+    if (recordado) contar('recordarme-activado');
     pintarSesion();
     avisar(recordado ? 'Listo: se recordará en esta computadora.' : 'Ya no se guarda en esta computadora.');
   });
   $('sesion').addEventListener('click', function (ev) {
     var b = ev.target.closest && ev.target.closest('#salir');
     if (!b || !confirmar(b, 'Sí, salir y borrar')) return;
+    contar('salir-y-borrar');
     salir();
     volverAlEjemplo();
     avisar('Saliste. Tus datos se borraron de esta computadora.');
@@ -702,7 +719,7 @@
       $('instalar').hidden = true;
     });
   };
-  window.addEventListener('appinstalled', function () { $('instalar').hidden = true; });
+  window.addEventListener('appinstalled', function () { $('instalar').hidden = true; contar('app-instalada'); });
 
   // En iPhone no hay botón de instalar: se explica una vez cómo hacerlo.
   var esIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;

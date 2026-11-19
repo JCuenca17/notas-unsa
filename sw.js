@@ -2,7 +2,7 @@
  * Service worker de Mis Notas: guarda la app para que abra sin internet.
  * Al publicar cambios, sube VERSION para que los usuarios reciban la nueva versión.
  */
-var VERSION = 'mis-notas-v5';
+var VERSION = 'mis-notas-v6';
 var APP = [
   './',
   'index.html',
@@ -40,7 +40,7 @@ self.addEventListener('fetch', function (ev) {
   if (req.method !== 'GET') return;
   var url = new URL(req.url);
   var propio = url.origin === self.location.origin;
-  var fuentes = url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com';
+  var fuentes = false; // la tipografía ahora se aloja en el sitio
   if (!propio && !fuentes) return;
   if (url.pathname.indexOf('/_vercel/') === 0) return; // contador de visitas: siempre directo
 

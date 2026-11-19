@@ -379,3 +379,13 @@ button, a, summary, input, textarea { touch-action: manipulation; -webkit-tap-hi
 }
 .aviso-priv div { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
 @media (max-width: 720px) { .aviso-priv { right: max(16px, env(safe-area-inset-right, 0px)); max-width: none; } }
+
+/* Página 404: un 0–20 que se queda corto, sin nota */
+.no-encontrada { max-width: 560px; display: grid; gap: 14px; justify-items: start; padding-block: 72px 80px; }
+.nf-codigo { font-size: 112px; line-height: .9; font-weight: 800; letter-spacing: -0.05em; color: var(--rojo); }
+.nf-regla { width: 100%; max-width: 360px; height: 6px; border-radius: 3px; background: var(--linea); position: relative; }
+.nf-regla span { position: absolute; left: 52.5%; top: -6px; bottom: -6px; width: 2px; background: var(--tinta); }
+.no-encontrada h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; margin-top: 10px; }
+.no-encontrada p { color: var(--gris); max-width: 52ch; }
+.nf-acciones { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+@media (max-width: 720px) { .no-encontrada { padding-block: 48px 56px; } .nf-codigo { font-size: 88px; } }
