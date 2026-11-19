@@ -3,9 +3,43 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Mis Notas UNSA</title>
-  <meta name="description" content="Tu nota en cada curso y cuánto necesitas para aprobar, con tus notas parciales de la extranet UNSA. Sin pedir tu clave.">
+  <title>Mis Notas UNSA: calcula cuánto necesitas para aprobar</title>
+  <meta name="description" content="Calculadora de notas parciales para alumnos de la UNSA: tu nota acumulada en cada curso, el mínimo que necesitas en lo que falta y tu probabilidad de aprobar. Trae tus notas de la extranet sin dar tu clave.">
+  <link rel="canonical" href="https://notas-unsa.vercel.app/">
+  <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#ffffff">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_PE">
+  <meta property="og:site_name" content="Mis Notas UNSA">
+  <meta property="og:title" content="Mis Notas UNSA: ¿cuánto necesitas para aprobar?">
+  <meta property="og:description" content="Tu nota en cada curso, el mínimo que te falta y tu probabilidad de aprobar. Sin pedir tu clave.">
+  <meta property="og:url" content="https://notas-unsa.vercel.app/">
+  <meta property="og:image" content="https://notas-unsa.vercel.app/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Mis Notas UNSA: tu nota y el mínimo que necesitas para aprobar">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Mis Notas UNSA",
+    "url": "https://notas-unsa.vercel.app/",
+    "description": "Calculadora no oficial de notas parciales para alumnos de la UNSA: nota acumulada, mínimo para aprobar y probabilidad de aprobar.",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web, Android, iOS, Windows",
+    "inLanguage": "es-PE",
+    "isAccessibleForFree": true,
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "PEN" }
+  }
+  </script>
+  <!-- Contador de visitas anónimo de Vercel (sin cookies). Se activa en Vercel → Analytics. -->
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    // Solo se envía la dirección de la página, nunca el enlace con notas (#n2=…) ni parámetros.
+    window.va('beforeSend', function (e) { try { var u = new URL(e.url); u.hash = ''; u.search = ''; return Object.assign({}, e, { url: u.toString() }); } catch (x) { return null; } });
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -101,7 +135,7 @@
         <dt>Tu nota</dt><dd>Lo que ya sumaste a tu nota final: cada nota por su peso. Un 16 que vale 10 % suma 1.6 de los 20 puntos. Cuando se califique el 100 % del curso, ese número es tu nota final.</dd>
         <dt>Tu sílabo</dt><dd>Al inicio se propone lo que falta: las evaluaciones que aún no aparecen, hasta el tercer parcial, con el porcentaje repartido en números enteros. Corrígelo con los porcentajes de tu sílabo: se guarda en este dispositivo y, cuando la extranet publique una de esas notas, la fila se quita sola.</dd>
         <dt>Mínimo</dt><dd>El promedio que necesitas en lo que falta para llegar a la nota para aprobar. Se redondea hacia arriba a un número entero.</dd>
-        <dt>Privacidad</dt><dd>Cada alumno tiene su sesión según su CUI. Si no marcas «Recordarme en esta computadora», nada queda guardado al cerrar la pestaña. Si lo marcas, se guarda solo en este navegador y separado de los demás alumnos. Nunca se guarda tu nombre ni se envía nada a un servidor.</dd>
+        <dt>Privacidad</dt><dd>Cada alumno tiene su sesión según su CUI. Si no marcas «Recordarme en esta computadora», nada queda guardado al cerrar la pestaña. Si lo marcas, se guarda solo en este navegador y separado de los demás alumnos. Nunca se guarda tu nombre y tus notas nunca salen de tu navegador. Solo se cuenta la visita, de forma anónima y sin cookies, para saber cuántas personas usan la página.</dd>
         <dt>Probabilidad</dt><dd>Supone que en lo que falta rindes parecido a tu promedio en ese curso, con la variación que tienen tus notas en todos tus cursos (entre 2 y 5 puntos). Es una referencia, no una predicción.</dd>
       </dl>
       <div class="ajustes">

@@ -2,7 +2,7 @@
  * Service worker de Mis Notas: guarda la app para que abra sin internet.
  * Al publicar cambios, sube VERSION para que los usuarios reciban la nueva versión.
  */
-var VERSION = 'mis-notas-v3';
+var VERSION = 'mis-notas-v4';
 var APP = [
   './',
   'index.html',
@@ -14,7 +14,8 @@ var APP = [
   'icons/icon-192.png',
   'icons/icon-512.png',
   'icons/icon-maskable-512.png',
-  'icons/apple-touch-icon.png'
+  'icons/apple-touch-icon.png',
+  'og.png'
 ];
 
 self.addEventListener('install', function (ev) {
@@ -36,6 +37,7 @@ self.addEventListener('fetch', function (ev) {
   var propio = url.origin === self.location.origin;
   var fuentes = url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com';
   if (!propio && !fuentes) return;
+  if (url.pathname.indexOf('/_vercel/') === 0) return; // contador de visitas: siempre directo
 
   // Páginas: primero la red (para tener lo último); sin internet, la copia guardada.
   if (req.mode === 'navigate') {
@@ -64,6 +66,6 @@ self.addEventListener('fetch', function (ev) {
     fetch(req, { cache: 'no-cache' }).then(function (res) {
       if (res && res.ok) { var copia = res.clone(); caches.open(VERSION).then(function (c) { c.put(req, copia); }); }
       return res;
-    }).catch(function () { return caches.match(req); })
+    }).catch(function () { return caches.match(req).then(function (g) { return g || Response.error(); }); })
   );
 });
