@@ -2,7 +2,7 @@
  * Service worker de Mis Notas: guarda la app para que abra sin internet.
  * Al publicar cambios, sube VERSION para que los usuarios reciban la nueva versión.
  */
-var VERSION = 'mis-notas-v1';
+var VERSION = 'mis-notas-v2';
 var APP = [
   './',
   'index.html',

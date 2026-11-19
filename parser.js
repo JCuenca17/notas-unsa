@@ -37,6 +37,7 @@
   function parsear(texto) {
     var filas = [];
     var periodo = null;
+    var cui = null;
     var lineas = String(texto || '').split(/\r?\n/);
 
     for (var i = 0; i < lineas.length; i++) {
@@ -44,6 +45,8 @@
       if (!l) continue;
       var p = /Periodo:?\s*([0-9]{4}\s*-\s*[A-Z0-9]+)/i.exec(l);
       if (p) periodo = p[1].replace(/\s+/g, '');
+      var cu = /CUI:?\s*(\d{6,12})/i.exec(l);
+      if (cu) cui = cu[1];
 
       var m = FILA.exec(l);
       if (!m) continue;
@@ -88,7 +91,7 @@
     });
 
     cursos.forEach(completarPendientes);
-    return { periodo: periodo, cursos: cursos };
+    return { periodo: periodo, cui: cui, cursos: cursos };
   }
 
   /*

@@ -40,7 +40,8 @@
       <div class="carga-intro">
         <h2 class="carga-titulo">Trae tus notas de la extranet</h2>
         <p>Verás cuánto llevas en cada curso y cuánto necesitas para aprobar.</p>
-        <p class="seguro">No te pedimos usuario ni clave. Entras a la extranet como siempre y tus notas se quedan en este dispositivo.</p>
+        <p class="seguro">No te pedimos usuario ni clave. Entras a la extranet como siempre. Si la computadora no es tuya, no se guarda nada: al cerrar la pestaña se borra.</p>
+        <div id="guardados" class="guardados" hidden></div>
       </div>
 
       <div class="metodos">
@@ -88,6 +89,8 @@
       <button id="bannerCargar" class="btn" type="button">Ver mis notas</button>
     </section>
 
+    <section id="sesion" class="sesion" aria-label="Tu sesión" hidden></section>
+
     <section id="resumen" class="resumen" aria-live="polite"></section>
 
     <section id="cursos" class="cursos" tabindex="-1" aria-label="Tus cursos"></section>
@@ -98,12 +101,13 @@
         <dt>Tu nota</dt><dd>Lo que ya sumaste a tu nota final: cada nota por su peso. Un 16 que vale 10 % suma 1.6 de los 20 puntos. Cuando se califique el 100 % del curso, ese número es tu nota final.</dd>
         <dt>Tu sílabo</dt><dd>Al inicio se propone lo que falta: las evaluaciones que aún no aparecen, hasta el tercer parcial, con el porcentaje repartido en números enteros. Corrígelo con los porcentajes de tu sílabo: se guarda en este dispositivo y, cuando la extranet publique una de esas notas, la fila se quita sola.</dd>
         <dt>Mínimo</dt><dd>El promedio que necesitas en lo que falta para llegar a la nota para aprobar. Se redondea hacia arriba a un número entero.</dd>
+        <dt>Privacidad</dt><dd>Cada alumno tiene su sesión según su CUI. Si no marcas «Recordarme en esta computadora», nada queda guardado al cerrar la pestaña. Si lo marcas, se guarda solo en este navegador y separado de los demás alumnos. Nunca se guarda tu nombre ni se envía nada a un servidor.</dd>
         <dt>Probabilidad</dt><dd>Supone que en lo que falta rindes parecido a tu promedio en ese curso, con la variación que tienen tus notas en todos tus cursos (entre 2 y 5 puntos). Es una referencia, no una predicción.</dd>
       </dl>
       <div class="ajustes">
         <label for="meta">Nota para aprobar</label>
         <input id="meta" type="number" autocomplete="off" min="0" max="20" step="0.5" value="10.5" inputmode="decimal">
-        <button id="borrar" class="btn-texto" type="button">Borrar mis datos</button>
+        <button id="borrar" class="btn-texto" type="button">Borrar lo de todos los alumnos en esta computadora</button>
       </div>
       <p class="legal">Herramienta independiente, sin relación oficial con la UNSA.</p>
     </details>

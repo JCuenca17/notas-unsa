@@ -2,7 +2,6 @@
   'use strict';
 
   var P = window.NotasParser;
-  var CLAVE = 'notasUnsa.v1';
   var CLAVE_TEMA = 'notasUnsa.tema';
   var EXTRANET = 'extranet.unsa.edu.pe';
 
@@ -22,26 +21,99 @@
   var esCel = window.matchMedia ? !window.matchMedia('(hover: hover) and (pointer: fine)').matches : false;
   document.documentElement.classList.toggle('es-cel', esCel);
 
-  var estado = cargar();
   var datos = null;
   var esEjemplo = false;
   var abiertos = {}; // qué secciones plegables están abiertas en esta visita
 
-  // ---------- guardado local ----------
+  /*
+   * Sesiones por alumno (CUI).
+   * - La sesión activa vive en sessionStorage: se borra al cerrar la pestaña.
+   * - Solo si el alumno marca "Recordarme en esta computadora" se guarda en localStorage,
+   *   separado por CUI, para que en una PC compartida nadie herede datos de otro.
+   */
+  var K_SESION = 'notasUnsa.sesion';
+  var K_PERFILES = 'notasUnsa.perfiles';
+  var K_ULTIMO = 'notasUnsa.ultimo';
+  var K_VIEJO = 'notasUnsa.v1';
+
+  function leer(store, k) { try { return JSON.parse(store.getItem(k) || 'null'); } catch (e) { return null; } }
+  function escribir(store, k, v) {
+    try { if (v == null) store.removeItem(k); else store.setItem(k, typeof v === 'string' ? v : JSON.stringify(v)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function nuevo(cui) { return { cui: cui || null, texto: '', meta: 10.5, supuestos: {}, pendientes: {} }; }
+  function normal(s) { s.supuestos = s.supuestos || {}; s.pendientes = s.pendientes || {}; if (s.meta == null) s.meta = 10.5; return s; }
+  function copia(o) { return JSON.parse(JSON.stringify(o)); }
+  function perfiles() { return leer(localStorage, K_PERFILES) || {}; }
+  function cuiDe(texto) { var m = /CUI:?\s*(\d{6,12})/i.exec(texto || ''); return m ? m[1] : null; }
+  // Solo se guardan las filas de notas y el periodo; nunca el nombre del alumno.
+  function limpiar(texto) {
+    return String(texto || '').split(/\r?\n/).filter(function (l) { return /^\s*\d+\.\s|Periodo/i.test(l); }).join('\n');
+  }
+
+  var recordado = false;
+
   function cargar() {
-    try {
-      var s = JSON.parse(localStorage.getItem(CLAVE) || 'null');
-      if (s && typeof s === 'object') {
-        s.supuestos = s.supuestos || {};
-        s.pendientes = s.pendientes || {};
-        return s;
+    // Datos de la versión anterior (un solo alumno): pasan a su perfil si traen CUI.
+    var viejo = leer(localStorage, K_VIEJO);
+    if (viejo && viejo.texto) {
+      var cv = cuiDe(viejo.texto);
+      var ps = perfiles();
+      if (cv && !ps[cv]) {
+        var m = normal(viejo); m.cui = cv; m.texto = limpiar(m.texto);
+        ps[cv] = m; escribir(localStorage, K_PERFILES, ps); escribir(localStorage, K_ULTIMO, cv);
+      } else if (!cv && !leer(sessionStorage, K_SESION)) {
+        var t = normal(viejo); t.cui = null; t.texto = limpiar(t.texto);
+        escribir(sessionStorage, K_SESION, t);
       }
-    } catch (e) { /* sin almacenamiento */ }
-    return { texto: '', meta: 10.5, supuestos: {}, pendientes: {} };
+    }
+    escribir(localStorage, K_VIEJO, null);
+
+    var ses = leer(sessionStorage, K_SESION);
+    var ps2 = perfiles();
+    if (ses && ses.cui !== undefined) { recordado = !!(ses.cui && ps2[ses.cui]); return normal(ses); }
+    var ult = leer(localStorage, K_ULTIMO);
+    if (ult && ps2[ult]) { recordado = true; var p = normal(copia(ps2[ult])); p.cui = ult; return p; }
+    recordado = false;
+    return nuevo(null);
   }
+
   function guardar() {
-    try { localStorage.setItem(CLAVE, JSON.stringify(estado)); } catch (e) { /* sin almacenamiento */ }
+    escribir(sessionStorage, K_SESION, estado);
+    if (recordado && estado.cui) {
+      var ps = perfiles();
+      ps[estado.cui] = estado;
+      escribir(localStorage, K_PERFILES, ps);
+      escribir(localStorage, K_ULTIMO, estado.cui);
+    }
   }
+
+  function recordar(si) {
+    recordado = !!si && !!estado.cui;
+    if (recordado) guardar();
+    else if (estado.cui) {
+      var ps = perfiles();
+      delete ps[estado.cui];
+      escribir(localStorage, K_PERFILES, Object.keys(ps).length ? ps : null);
+      if (leer(localStorage, K_ULTIMO) === estado.cui) escribir(localStorage, K_ULTIMO, null);
+    }
+  }
+
+  // Cambia de alumno al traer notas de otro CUI: nunca hereda datos ajenos.
+  function abrirSesion(cui) {
+    if (estado.cui === cui && estado.texto) return;
+    var ps = perfiles();
+    if (cui && ps[cui]) { estado = normal(copia(ps[cui])); estado.cui = cui; recordado = true; }
+    else { estado = nuevo(cui); recordado = false; }
+  }
+
+  function salir() {
+    if (estado.cui) recordar(false);
+    escribir(sessionStorage, K_SESION, null);
+    estado = nuevo(null);
+    recordado = false;
+  }
+
+  var estado = cargar();
 
   // ---------- formato ----------
   function uno(n) { return (Math.round(n * 10) / 10).toFixed(1); }
@@ -77,7 +149,9 @@
   // ---------- botón de favoritos ----------
   function codigoMarcador() {
     var destino = location.origin + location.pathname;
-    return 'javascript:(function(){var L=document.body.innerText.split(\'\\n\').filter(function(l){return /^\\s*\\d+\\.\\s|Periodo/i.test(l)});' +
+    // Envía las filas de notas, el periodo y solo los dígitos del CUI (nunca el nombre).
+    return 'javascript:(function(){var T=document.body.innerText,L=T.split(\'\\n\').filter(function(l){return /^\\s*\\d+\\.\\s|Periodo/i.test(l)});' +
+      'var c=(T.match(/CUI:?\\s*(\\d{6,12})/i)||[])[1];if(c)L.unshift(\'CUI: \'+c);' +
       'if(!L.some(function(l){return /%/.test(l)})){alert(\'Primero entra a tus Notas Parciales en la extranet de la UNSA y luego usa Mis Notas.\');return}' +
       'location.href=\'' + destino + '#n=\'+encodeURIComponent(L.join(\'\\n\'))})();';
   }
@@ -187,6 +261,8 @@
   function render() {
     var meta = metaActual();
     $('banner').hidden = !esEjemplo;
+    pintarSesion();
+    pintarGuardados();
 
     var cursos = datos ? datos.cursos : [];
     var sd = P.dispersion(cursos);
@@ -350,11 +426,44 @@
     datos = d;
     esEjemplo = false;
     if (guardarlo) {
-      if (estado.texto !== texto) estado.supuestos = {};
-      estado.texto = texto;
+      // Notas de otro CUI abren otra sesión. Sin CUI no se sabe de quién son: sesión nueva.
+      if (d.cui) abrirSesion(d.cui);
+      else if (estado.cui) { estado = nuevo(null); recordado = false; }
+      var limpio = limpiar(texto);
+      if (estado.texto !== limpio) estado.supuestos = {};
+      estado.texto = limpio;
       guardar();
     }
     return true;
+  }
+
+  // Barra de sesión: de quién son las notas, recordar o no, y salir.
+  function pintarSesion() {
+    var el = $('sesion');
+    el.hidden = esEjemplo;
+    if (esEjemplo) return;
+    var quien = estado.cui ? 'CUI <b>' + esc(estado.cui) + '</b>' : '<b>sin CUI</b>';
+    el.innerHTML =
+      '<p class="ses-quien">Sesión de ' + quien + '</p>' +
+      '<label class="ses-recordar" for="recordar"><input type="checkbox" id="recordar"' + (recordado ? ' checked' : '') + (estado.cui ? '' : ' disabled') + '> Recordarme en esta computadora</label>' +
+      '<button type="button" id="salir" class="btn btn-sec btn-chico">Salir y borrar</button>' +
+      '<p class="ses-ayuda">' + (!estado.cui
+        ? 'Tu botón de favoritos es de una versión anterior y no envía tu CUI. Vuelve a arrastrarlo desde «Actualizar notas» o copia y pega la página.'
+        : recordado
+          ? 'Tus notas y porcentajes se guardan en esta computadora, separados de los de otros alumnos.'
+          : 'No se guarda nada: al cerrar la pestaña o tocar «Salir y borrar» se borra todo. Si es tu computadora, marca «Recordarme».') + '</p>';
+  }
+
+  function pintarGuardados() {
+    var ps = perfiles();
+    var otros = Object.keys(ps).filter(function (k) { return k !== estado.cui; });
+    var el = $('guardados');
+    el.hidden = !otros.length;
+    el.innerHTML = otros.length
+      ? '<p>Alumnos recordados en esta computadora:</p>' + otros.map(function (k) {
+          return '<button type="button" class="btn btn-sec btn-chico" data-abrir="' + esc(k) + '">Abrir CUI ' + esc(k) + '</button>';
+        }).join('')
+      : '';
   }
 
   function mostrarCarga(si) {
@@ -369,7 +478,7 @@
     mostrarCarga(false);
     render();
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    avisar('Notas cargadas. Tus porcentajes guardados se mantuvieron.');
+    avisar(recordado ? 'Notas cargadas. Tus porcentajes guardados se mantuvieron.' : 'Notas cargadas. No se guardan en esta computadora.');
   }
 
   function desdeEnlace() {
@@ -515,16 +624,59 @@
     return false;
   }
 
-  $('borrar').onclick = function () {
-    if (!confirmar($('borrar'), 'Sí, borrar todo')) return;
-    try { localStorage.removeItem(CLAVE); } catch (e) { /* nada */ }
-    estado = { texto: '', meta: 10.5, supuestos: {}, pendientes: {} };
-    $('meta').value = 10.5;
+  function volverAlEjemplo() {
+    $('meta').value = estado.meta;
     usarTexto(EJEMPLO, false);
     esEjemplo = true;
     render();
     mostrarCarga(true);
+  }
+
+  // Borra lo de TODOS los alumnos recordados en este navegador.
+  $('borrar').onclick = function () {
+    if (!confirmar($('borrar'), 'Sí, borrar todo')) return;
+    escribir(localStorage, K_PERFILES, null);
+    escribir(localStorage, K_ULTIMO, null);
+    escribir(sessionStorage, K_SESION, null);
+    estado = nuevo(null);
+    recordado = false;
+    volverAlEjemplo();
+    avisar('Se borró todo lo guardado en esta computadora.');
   };
+
+  // Barra de sesión: recordar y salir.
+  $('sesion').addEventListener('change', function (ev) {
+    if (ev.target.id !== 'recordar') return;
+    recordar(ev.target.checked);
+    pintarSesion();
+    avisar(recordado ? 'Listo: se recordará en esta computadora.' : 'Ya no se guarda en esta computadora.');
+  });
+  $('sesion').addEventListener('click', function (ev) {
+    var b = ev.target.closest && ev.target.closest('#salir');
+    if (!b || !confirmar(b, 'Sí, salir y borrar')) return;
+    salir();
+    volverAlEjemplo();
+    avisar('Saliste. Tus datos se borraron de esta computadora.');
+  });
+
+  // Abrir a otro alumno recordado en esta computadora.
+  $('guardados').addEventListener('click', function (ev) {
+    var b = ev.target.closest && ev.target.closest('[data-abrir]');
+    if (!b) return;
+    abrirSesion(b.dataset.abrir);
+    if (usarTexto(estado.texto, false)) { guardar(); $('meta').value = estado.meta; cargado(); }
+  });
+
+  // Otra pestaña cambió lo recordado de este alumno: se actualiza aquí también.
+  window.addEventListener('storage', function (ev) {
+    if (ev.key !== K_PERFILES || !recordado || !estado.cui) return;
+    var p = perfiles()[estado.cui];
+    if (!p) { recordado = false; pintarSesion(); return; }
+    estado = normal(copia(p));
+    escribir(sessionStorage, K_SESION, estado);
+    if (estado.texto) usarTexto(estado.texto, false);
+    redibujar();
+  });
 
   // ---------- instalar como app ----------
   var instalable = null;
