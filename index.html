@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mis Notas UNSA</title>
+  <meta name="description" content="Tu nota en cada curso y cuánto necesitas para aprobar, con tus notas parciales de la extranet UNSA. Sin pedir tu clave.">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Mis Notas">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    try { var t = localStorage.getItem('notasUnsa.tema'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="saltar" href="#cursos">Ir a mis cursos</a>
+  <header class="top">
+    <div class="wrap top-in">
+      <a class="logo" href="./"><img src="favicon.svg" alt="" width="26" height="26"> Mis Notas <span>UNSA</span></a>
+      <div class="acciones">
+        <button id="instalar" class="btn btn-chico" type="button" hidden>Instalar app</button>
+        <button id="tema" class="btn-texto" type="button">Oscuro</button>
+        <button id="abrirCarga" class="btn btn-sec" type="button" aria-expanded="false" aria-controls="carga">Actualizar notas</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="carga" class="carga" hidden>
+      <div class="carga-intro">
+        <h2 class="carga-titulo">Trae tus notas de la extranet</h2>
+        <p>Verás cuánto llevas en cada curso y cuánto necesitas para aprobar.</p>
+        <p class="seguro">No te pedimos usuario ni clave. Entras a la extranet como siempre y tus notas se quedan en este dispositivo.</p>
+      </div>
+
+      <div class="metodos">
+        <div id="metodoFav" class="metodo">
+          <h2>Con un clic desde tu barra de favoritos</h2>
+          <ol class="pasos">
+            <li>
+              <p>Arrastra este botón hasta tu barra de favoritos.</p>
+              <a id="marcador" class="marcador" href="#"><img src="favicon.svg" alt="" width="18" height="18">Mis Notas</a>
+              <p id="pista" class="pista">Si no ves la barra, presiona <kbd>Ctrl</kbd>&nbsp;+&nbsp;<kbd>Shift</kbd>&nbsp;+&nbsp;<kbd>B</kbd>.</p>
+            </li>
+            <li>
+              <p>Abre tus notas parciales en la extranet.</p>
+              <a class="btn btn-sec btn-chico" href="http://extranet.unsa.edu.pe/sisacad/parciales18/index.php" target="_blank" rel="noopener">Abrir la extranet</a>
+            </li>
+            <li><p>Con tus notas en pantalla, haz clic en <b>Mis Notas</b> en tu barra.</p></li>
+          </ol>
+        </div>
+
+        <div id="metodoCopiar" class="metodo">
+          <h2 id="tituloCopiar">Copia y pega tus notas</h2>
+          <ol class="pasos">
+            <li class="solo-cel">
+              <p>Abre tus notas parciales en la extranet.</p>
+              <a class="btn btn-sec btn-chico" href="http://extranet.unsa.edu.pe/sisacad/parciales18/index.php" target="_blank" rel="noopener">Abrir la extranet</a>
+            </li>
+            <li>
+              <p class="solo-pc">En la página de notas presiona <kbd>Ctrl</kbd> + <kbd>A</kbd> y luego <kbd>Ctrl</kbd> + <kbd>C</kbd>.</p>
+              <p class="solo-cel">Mantén presionado el texto, toca Seleccionar todo y luego Copiar.</p>
+            </li>
+            <li class="pegar">
+              <label for="pegado">Pega aquí lo que copiaste.</label>
+              <textarea id="pegado" rows="3" placeholder="Ej.: 1. NOMBRE DEL CURSO EVAL. CONTINUA 1 A 16 10% No…" autocomplete="off" spellcheck="false"></textarea>
+              <button id="leerPegado" class="btn" type="button">Ver mis notas</button>
+              <p id="errorPegado" class="error" role="alert"></p>
+            </li>
+          </ol>
+          <p class="pista solo-pc">También puedes presionar <kbd>Ctrl</kbd> + <kbd>V</kbd> en cualquier parte de esta página.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="banner" class="banner" hidden>
+      <p>Estás viendo notas de ejemplo.</p>
+      <button id="bannerCargar" class="btn" type="button">Ver mis notas</button>
+    </section>
+
+    <section id="resumen" class="resumen" aria-live="polite"></section>
+
+    <section id="cursos" class="cursos" tabindex="-1" aria-label="Tus cursos"></section>
+
+    <details class="como">
+      <summary>Cómo se calcula</summary>
+      <dl>
+        <dt>Tu nota</dt><dd>Lo que ya sumaste a tu nota final: cada nota por su peso. Un 16 que vale 10 % suma 1.6 de los 20 puntos. Cuando se califique el 100 % del curso, ese número es tu nota final.</dd>
+        <dt>Tu sílabo</dt><dd>Al inicio se propone lo que falta: las evaluaciones que aún no aparecen, hasta el tercer parcial, con el porcentaje repartido en números enteros. Corrígelo con los porcentajes de tu sílabo: se guarda en este dispositivo y, cuando la extranet publique una de esas notas, la fila se quita sola.</dd>
+        <dt>Mínimo</dt><dd>El promedio que necesitas en lo que falta para llegar a la nota para aprobar. Se redondea hacia arriba a un número entero.</dd>
+        <dt>Probabilidad</dt><dd>Supone que en lo que falta rindes parecido a tu promedio en ese curso, con la variación que tienen tus notas en todos tus cursos (entre 2 y 5 puntos). Es una referencia, no una predicción.</dd>
+      </dl>
+      <div class="ajustes">
+        <label for="meta">Nota para aprobar</label>
+        <input id="meta" type="number" autocomplete="off" min="0" max="20" step="0.5" value="10.5" inputmode="decimal">
+        <button id="borrar" class="btn-texto" type="button">Borrar mis datos</button>
+      </div>
+      <p class="legal">Herramienta independiente, sin relación oficial con la UNSA.</p>
+    </details>
+  </main>
+
+  <p id="toast" class="toast" role="status" hidden></p>
+
+  <div id="ios" class="ios" hidden>
+    <p>Para instalar Mis Notas en tu iPhone, toca <b>Compartir</b> y luego <b>Agregar a inicio</b>.</p>
+    <button id="iosCerrar" class="btn-texto" type="button">Entendido</button>
+  </div>
+
+  <script src="parser.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
