@@ -51,6 +51,7 @@
   }
 
   var recordado = false;
+  var fuente = null; // cómo llegaron las notas en esta visita: boton, boton-viejo o pegado
 
   function cargar() {
     // Datos de la versión anterior (un solo alumno): pasan a su perfil si traen CUI.
@@ -153,7 +154,7 @@
     return 'javascript:(function(){var T=document.body.innerText,L=T.split(\'\\n\').filter(function(l){return /^\\s*\\d+\\.\\s|Periodo/i.test(l)});' +
       'var c=(T.match(/CUI:?\\s*(\\d{6,12})/i)||[])[1];if(c)L.unshift(\'CUI: \'+c);' +
       'if(!L.some(function(l){return /%/.test(l)})){alert(\'Primero entra a tus Notas Parciales en la extranet de la UNSA y luego usa Mis Notas.\');return}' +
-      'location.href=\'' + destino + '#n=\'+encodeURIComponent(L.join(\'\\n\'))})();';
+      'location.href=\'' + destino + '#n2=\'+encodeURIComponent(L.join(\'\\n\'))})();';
   }
 
   // ---------- probabilidad ----------
@@ -448,7 +449,9 @@
       '<label class="ses-recordar" for="recordar"><input type="checkbox" id="recordar"' + (recordado ? ' checked' : '') + (estado.cui ? '' : ' disabled') + '> Recordarme en esta computadora</label>' +
       '<button type="button" id="salir" class="btn btn-sec btn-chico">Salir y borrar</button>' +
       '<p class="ses-ayuda">' + (!estado.cui
-        ? 'Tu botón de favoritos es de una versión anterior y no envía tu CUI. Vuelve a arrastrarlo desde «Actualizar notas» o copia y pega la página.'
+        ? (fuente === 'boton-viejo'
+            ? 'Usaste un botón «Mis Notas» antiguo, que no envía tu CUI. Bórralo de tu barra (clic derecho, Eliminar), recarga esta página y vuelve a arrastrar el botón desde «Actualizar notas».'
+            : 'No encontramos tu CUI. Copia la página de notas completa (Ctrl + A) para que incluya la línea «CUI», y vuelve a pegarla.')
         : recordado
           ? 'Tus notas y porcentajes se guardan en esta computadora, separados de los de otros alumnos.'
           : 'No se guarda nada: al cerrar la pestaña o tocar «Salir y borrar» se borra todo. Si es tu computadora, marca «Recordarme».') + '</p>';
@@ -482,10 +485,12 @@
   }
 
   function desdeEnlace() {
-    var m = /^#n=(.+)$/.exec(location.hash);
+    // #n2= lo envía el botón actual; #n= viene de un botón antiguo que no manda el CUI.
+    var m = /^#n(2?)=(.+)$/.exec(location.hash);
     if (!m) return false;
+    fuente = m[1] ? 'boton' : 'boton-viejo';
     var texto;
-    try { texto = decodeURIComponent(m[1]); } catch (e) { return false; }
+    try { texto = decodeURIComponent(m[2]); } catch (e) { return false; }
     try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* nada */ }
     return usarTexto(texto, true);
   }
@@ -507,6 +512,7 @@
 
   $('leerPegado').onclick = function () {
     $('errorPegado').textContent = '';
+    fuente = 'pegado';
     if (usarTexto($('pegado').value, true)) { $('pegado').value = ''; cargado(); }
     else $('errorPegado').textContent = 'Ese texto no tiene la tabla de notas. Copia toda la página de Notas Parciales y vuelve a pegarla.';
   };
@@ -517,6 +523,7 @@
     if (t && (t.tagName === 'INPUT' || (t.tagName === 'TEXTAREA' && t.id !== 'pegado'))) return;
     var texto = ev.clipboardData && ev.clipboardData.getData('text');
     if (!texto) return;
+    fuente = 'pegado';
     if (usarTexto(texto, true)) {
       ev.preventDefault();
       $('pegado').value = '';

@@ -2,7 +2,7 @@
  * Service worker de Mis Notas: guarda la app para que abra sin internet.
  * Al publicar cambios, sube VERSION para que los usuarios reciban la nueva versión.
  */
-var VERSION = 'mis-notas-v2';
+var VERSION = 'mis-notas-v3';
 var APP = [
   './',
   'index.html',
@@ -49,16 +49,21 @@ self.addEventListener('fetch', function (ev) {
     return;
   }
 
-  // Archivos y fuentes: la copia guardada al instante y se actualiza por detrás.
-  ev.respondWith(
-    caches.open(VERSION).then(function (c) {
-      return c.match(req).then(function (guardado) {
-        var red = fetch(req).then(function (res) {
-          if (res && (res.ok || res.type === 'opaque')) c.put(req, res.clone());
-          return res;
-        }).catch(function () { return guardado; });
-        return guardado || red;
+  // Fuentes: la copia guardada (no cambian).
+  if (fuentes) {
+    ev.respondWith(caches.open(VERSION).then(function (c) {
+      return c.match(req).then(function (g) {
+        return g || fetch(req).then(function (res) { c.put(req, res.clone()); return res; });
       });
-    })
+    }));
+    return;
+  }
+
+  // Archivos de la app: siempre lo último de la red; la copia guardada solo sin internet.
+  ev.respondWith(
+    fetch(req, { cache: 'no-cache' }).then(function (res) {
+      if (res && res.ok) { var copia = res.clone(); caches.open(VERSION).then(function (c) { c.put(req, copia); }); }
+      return res;
+    }).catch(function () { return caches.match(req); })
   );
 });
